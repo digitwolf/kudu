@@ -192,7 +192,7 @@ namespace Kudu.Core.SiteExtensions
             string localPath = GetInstallationDirectory(info.Id);
             if (FileSystemHelpers.DirectoryExists(localPath))
             {
-                info.SiteUrl = "/" + info.Id + "/";
+                info.ExtensionUrl = "/" + info.Id + "/";
                 info.LocalPath = localPath;
                 info.InstalledDateTime = FileSystemHelpers.GetLastWriteTimeUtc(info.LocalPath);
             }

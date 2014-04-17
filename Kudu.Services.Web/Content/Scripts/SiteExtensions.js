@@ -91,7 +91,7 @@
     $(document).on("click", ".installButton", function () {
         var btn = this;
         var context = ko.contextFor(btn);
-        var data = ko.dataFor(btn);
+        var data = context.$root.detailedSiteExtension();
         $(btn).html(activitySpin);
         $(btn).prop("disabled", "disabled");
         $.ajax({
@@ -109,7 +109,7 @@
                 }, 5000);
             },
             error: function (jqXhr, textStatus, errorThrown) {
-                displayError("Failed to install <strong>" + result.Title + "</strong>: " + textStatus + " - " + errorThrown);
+                displayError("Failed to install <strong>" + data.Title + "</strong>: " + textStatus + " - " + errorThrown);
             },
             complete: function () {
                 context.$root.populateAllTabs();

@@ -57,6 +57,11 @@
         if (!ext.Title) {
             ext.Title = ext.Id;
         }
+        if (ext.ExtensionUrl) {
+            ext.primaryAction = ko.observable('Launch');
+        } else {
+            ext.primaryAction = ko.observable('Install');
+        }
         return ext;
     }
 
@@ -88,12 +93,18 @@
         buttonResponse(this, ko.contextFor(this).$root.populateAllTabs, clearText);
     });
 
-    $(document).on("click", ".installButton", function () {
+    $(document).on("click", ".installDialog", function () {
         var btn = this;
         var context = ko.contextFor(btn);
+        var data = ko.dataFor(btn);
+        context.$root.clickedButton(btn);
+        context.$root.detailedSiteExtension(data);
+    });
+
+    $(document).on("click", ".installButton", function () {
+        var context = ko.contextFor(this);
         var data = context.$root.detailedSiteExtension();
-        $(btn).html(activitySpin);
-        $(btn).prop("disabled", "disabled");
+        data.primaryAction('Wait');
         $.ajax({
             type: "POST",
             url: "/api/extensions",
@@ -101,6 +112,7 @@
             data: JSON.stringify(data),
             success: function (result) {
                 result = processExtensions(result);
+                data.primaryAction('Launch');
                 $("#restartButton").attr("data-content", "<strong>" + result.Title
                     + "</strong> is successfully installed. <strong>Restart Site </strong> to make it available.");
                 $("#restartButton").popover('show');
@@ -170,6 +182,7 @@
         self.loadingGallery = ko.observable(true);
         self.loadingInstalled = ko.observable(true);
         self.detailedSiteExtension = ko.observable();
+        self.clickedButton = ko.observable();
         self.searchTerms = ko.observable("");
         self.installed = ko.observableArray();
         self.gallery = ko.observableArray();
@@ -256,6 +269,10 @@
 
         self.details = function (extension) {
             self.detailedSiteExtension(extension);
+        };
+
+        self.processInstalled = function (extension) {
+
         };
 
         // Initialization

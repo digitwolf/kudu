@@ -71,11 +71,15 @@
                             </a>
                         </div>
                         <div class="col-xs-9">
-                            <button class="btn btn-info button-bottom-left" role="button" data-bind="visible: !LocalPath, click: $parent.details"
+                            <button class="btn btn-info button-bottom-left installDialog" role="button" data-bind="visible: primaryAction() === 'Install'"
                                     data-toggle="modal" data-target="#installModal" data-placement="top" title="Install">
                                 <i class="fa fa-plus"></i>
                             </button>
-                            <a class="btn btn-info button-bottom-left" role="button" data-bind="visible: ExtensionUrl, attr: {href : ExtensionUrl, target : '_blank'}"
+                            <button class="btn btn-info button-bottom-left installDialog" role="button" data-bind="visible: primaryAction() === 'Wait'"
+                                    data-toggle="modal" data-target="#installModal" data-placement="top" title="Wait" disabled>
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </button>
+                            <a class="btn btn-info button-bottom-left" role="button" data-bind="visible: primaryAction() === 'Launch', attr: {href : ExtensionUrl, target : '_blank'}"
                                data-placement="top" title="Launch">
                                 <i class="fa fa-play"></i>
                             </a>

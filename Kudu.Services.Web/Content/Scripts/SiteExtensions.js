@@ -112,7 +112,9 @@
             data: JSON.stringify(data),
             success: function (result) {
                 result = processExtensions(result);
+                context.$root.addInstalled(result);
                 data.primaryAction('Launch');
+
                 $("#restartButton").attr("data-content", "<strong>" + result.Title
                     + "</strong> is successfully installed. <strong>Restart Site </strong> to make it available.");
                 $("#restartButton").popover('show');
@@ -124,7 +126,7 @@
                 displayError("Failed to install <strong>" + data.Title + "</strong>: " + textStatus + " - " + errorThrown);
             },
             complete: function () {
-                context.$root.populateAllTabs();
+                // no op
             }
         });
     });
@@ -271,8 +273,21 @@
             self.detailedSiteExtension(extension);
         };
 
-        self.processInstalled = function (extension) {
+        self.addInstalled = function (newExt) {
+            var index = -1;
+            self.installed().forEach(function(installedExt, i) {
+                if (newExt.Id === installedExt.Id) {
+                    index = i;
+                    return true;
+                }
+                return false;
+            });
 
+            if (index === -1) {
+                self.installed().push(newExt);
+            } else {
+                self.installed()[index] = newExt;
+            }
         };
 
         // Initialization

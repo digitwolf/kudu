@@ -82,8 +82,8 @@ namespace Kudu.Core.SiteExtensions
 
         public SiteExtensionInfo InstallExtension(string id)
         {
-            IPackage package = _remoteRepository.FindPackage(id);
-            if (package == null)
+            IPackage repoPackage = _remoteRepository.FindPackage(id);
+            if (repoPackage == null)
             {
                 return null;
             }
@@ -91,17 +91,12 @@ namespace Kudu.Core.SiteExtensions
             // Directory where _localRepository.AddPackage would use.
             string installationDirectory = GetInstallationDirectory(id);
 
-            bool success = InstallExtension(package, installationDirectory);
+            IPackage localPackage = InstallExtension(repoPackage, installationDirectory);
 
-            if (success)
-            {
-                return ConvertLocalPackageToSiteExtensionInfo(package);
-            }
-
-            return null;
+            return localPackage == null ? null : ConvertLocalPackageToSiteExtensionInfo(localPackage);
         }
 
-        public bool InstallExtension(IPackage package, string installationDirectory)
+        public IPackage InstallExtension(IPackage package, string installationDirectory)
         {
             try
             {
@@ -145,10 +140,11 @@ namespace Kudu.Core.SiteExtensions
                 ITracer tracer = _traceFactory.GetTracer();
                 tracer.TraceError(ex);
                 FileSystemHelpers.DeleteDirectorySafe(installationDirectory);
-                return false;
+                return null;
             }
 
-            return true;
+
+            return _localRepository.FindPackage(package.Id);
         }
 
         public bool UninstallExtension(string id)
